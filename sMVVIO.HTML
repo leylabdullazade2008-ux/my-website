@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Venturo - Turizm Tətbiqi</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 420px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 30px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 36px;
+            margin-bottom: 5px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .screen {
+            display: none;
+            padding: 20px;
+            min-height: 400px;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        .back-btn {
+            background: rgba(102, 126, 234, 0.1);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 14px;
+            color: #667eea;
+            font-weight: 600;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+        }
+
+        .back-btn:hover {
+            background: rgba(102, 126, 234, 0.2);
+            transform: translateX(-5px);
+        }
+
+        .country-card {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 20px;
+            padding: 25px;
+            margin: 20px 0;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 3px solid transparent;
+        }
+
+        .country-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            border-color: #667eea;
+        }
+
+        .country-card .flag {
+            font-size: 50px;
+            margin-bottom: 10px;
+        }
+
+        .country-card h2 {
+            font-size: 28px;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .country-card p {
+            color: #666;
+        }
+
+        .categories {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .category-card {
+            background: white;
+            border-radius: 20px;
+            padding: 25px 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border: 2px solid #f0f0f0;
+        }
+
+        .category-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+            border-color: #667eea;
+        }
+
+        .category-icon {
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+
+        .category-card h3 {
+            font-size: 13px;
+            color: #333;
+        }
+
+        .detail-card {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        }
+
+        .detail-card:hover {
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+
+        .detail-card h3 {
+            color: #333;
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+
+        .detail-card p {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        .detail-meta {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+
+        .meta-item {
+            background: #f0f4ff;
+            padding: 8px 12px;
+            border-radius: 10px;
+            font-size: 13px;
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .ai-chat-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+
+        .ai-chat-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.6);
+        }
+
+        .ai-chat-box {
+            position: fixed;
+            bottom: 100px;
+            right: 30px;
+            width: 350px;
+            max-height: 500px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            display: none;
+            flex-direction: column;
+            z-index: 999;
+        }
+
+        .ai-chat-box.active {
+            display: flex;
+        }
+
+        .ai-chat-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 20px 20px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .ai-chat-header h3 {
+            font-size: 18px;
+        }
+
+        .ai-close-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .ai-chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+            max-height: 350px;
+        }
+
+        .ai-message {
+            margin-bottom: 15px;
+            padding: 12px 15px;
+            border-radius: 15px;
+            max-width: 85%;
+            line-height: 1.5;
+        }
+
+        .ai-message.bot {
+            background: #f0f4ff;
+            color: #333;
+            margin-right: auto;
+        }
+
+        .ai-message.user {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            margin-left: auto;
+        }
+
+        .ai-chat-input {
+            display: flex;
+            gap: 10px;
+            padding: 15px;
+            border-top: 1px solid #eee;
+        }
+
+        .ai-chat-input input {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #eee;
+            border-radius: 10px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .ai-chat-input input:focus {
+            border-color: #667eea;
+        }
+
+        .ai-send-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .ai-send-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .ai-loading {
+            display: none;
+            text-align: center;
+            padding: 10px;
+            color: #667eea;
+        }
+
+        @media (max-width: 480px) {
+            .ai-chat-box {
+                width: calc(100vw - 40px);
+                right: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌍 Venturo</h1>
+            <p>Səyahətinizi kəşf edin</p>
+        </div>
+
+        <div id="homeScreen" class="screen active">
+            <h2 style="margin: 20px 0; color: #333;">Ölkə seçin</h2>
+            <div class="country-card" onclick="showScreen('azerbaijanScreen')">
+                <div class="flag">🇦🇿</div>
+                <h2>Azərbaycan</h2>
+                <p>Odlar diyarı</p>
+            </div>
+            <div style="text-align: center; margin-top: 20px; color: #666; font-size: 14px;">
+                ℹ️ Daha çox ölkələr tezliklə əlavə ediləcək
+            </div>
+        </div>
+
+        <div id="azerbaijanScreen" class="screen">
+            <button class="back-btn" onclick="showScreen('homeScreen')">← Geri</button>
+            <h2 style="margin-bottom: 20px; color: #333;">🇦🇿 Azərbaycan</h2>
+            
+            <div class="categories">
+                <div class="category-card" onclick="showCategory('places')">
+                    <div class="category-icon">🗺️</div>
+                    <h3>Gəzməli Yerlər</h3>
+                </div>
+                <div class="category-card" onclick="showCategory('food')">
+                    <div class="category-icon">🍽️</div>
+                    <h3>Mətbəx</h3>
+                </div>
+                <div class="category-card" onclick="showCategory('hotels')">
+                    <div class="category-icon">🏨</div>
+                    <h3>Qalacaq Yerlər</h3>
+                </div>
+                <div class="category-card" onclick="showCategory('rules')">
+                    <div class="category-icon">ℹ️</div>
+                    <h3>Qaydalar</h3>
+                </div>
+                <div class="category-card" onclick="showCategory('transport')">
+                    <div class="category-icon">🚌</div>
+                    <h3>Nəqliyyat</h3>
+                </div>
+                <div class="category-card" onclick="showCategory('phrases')">
+                    <div class="category-icon">💬</div>
+                    <h3>Faydalı Frazalar</h3>
+                </div>
+            </div>
+        </div>
+
+        <div id="placesScreen" class="screen"></div>
+        <div id="foodScreen" class="screen"></div>
+        <div id="hotelsScreen" class="screen"></div>
+        <div id="rulesScreen" class="screen"></div>
+        <div id="transportScreen" class="screen"></div>
+        <div id="phrasesScreen" class="screen"></div>
+    </div>
+
+    <button class="ai-chat-btn" onclick="toggleAIChat()">🤖</button>
+
+    <div class="ai-chat-box" id="aiChatBox">
+        <div class="ai-chat-header">
+            <h3>🤖 AI Köməkçi</h3>
+            <button class="ai-close-btn" onclick="toggleAIChat()">×</button>
+        </div>
+        <div class="ai-chat-messages" id="aiMessages">
+            <div class="ai-message bot">
+                Salam! Mən Venturo AI köməkçisiyəm. 🌍<br><br>
+                Azərbaycan haqqında hər hansı sualınız var? Gəzməli yerlər, mətbəx, nəqliyyat və s. haqqında soruşa bilərsiniz!
+            </div>
+        </div>
+        <div class="ai-loading" id="aiLoading">💭 Düşünürəm...</div>
+        <div class="ai-chat-input">
+            <input type="text" id="aiInput" placeholder="Sualınızı yazın..." onkeypress="handleKeyPress(event)">
+            <button class="ai-send-btn" onclick="sendAIMessage()">Göndər</button>
+        </div>
+    </div>
+
+    <script>
+        var data = {
+            places: [
+                { name: "İçərişəhər", city: "Bakı", desc: "UNESCO-nun Dünya İrsi siyahısında olan tarixi mərkəz. Qız Qalası, Şirvanşahlar Sarayı və qədim daş küçələr", rating: "⭐ 4.8", price: "10-15 AZN", time: "3-4 saat" },
+                { name: "Qobustan", city: "Bakı", desc: "40.000 illik qaya rəsmləri və palçıq vulkanları. Qədim insan həyatının izləri", rating: "⭐ 4.7", price: "2 AZN", time: "2-3 saat" },
+                { name: "Şəki Xan Sarayı", city: "Şəki", desc: "XVIII əsr memarlıq incisi. Şüşəbənd sənəti və freskaları ilə məşhur", rating: "⭐ 4.9", price: "4 AZN", time: "1-2 saat" },
+                { name: "Yanar Dağ", city: "Bakı", desc: "Təbii qaz çıxışı səbəbindən daim yanan dağ. Gecə mənzərəsi inanılmazdır", rating: "⭐ 4.5", price: "2 AZN", time: "1 saat" },
+                { name: "Qəbələ", city: "Qəbələ", desc: "Dağ kurortları, Tufandağ, teleferik, şəlalələr və təbiət", rating: "⭐ 4.6", price: "Müxtəlif", time: "Tam gün" }
+            ],
+            food: [
+                { name: "Plov", desc: "Azərbaycanın milli yeməyi. Düyü, ət, kəşniş və zeytun yağı ilə hazırlanır", price: "8-15 AZN", popularity: "⭐⭐⭐⭐⭐" },
+                { name: "Dolma", desc: "Üzüm yarpağına və ya tərəvəzə bükülmüş ət və düyü qarışığı", price: "6-12 AZN", popularity: "⭐⭐⭐⭐⭐" },
+                { name: "Lülə Kabab", desc: "Manqalda bişmiş ət kabab. Əsasən qoyun ətindən hazırlanır", price: "5-10 AZN", popularity: "⭐⭐⭐⭐⭐" },
+                { name: "Paxlava", desc: "Qoz-bal şirniyyatı. Azərbaycanın ən məşhur desserti", price: "3-8 AZN", popularity: "⭐⭐⭐⭐⭐" },
+                { name: "Şəkərbura", desc: "Qozla doldurulmuş xəmirli şirniyyat. Novruz bayramının simvoludur", price: "2-5 AZN", popularity: "⭐⭐⭐⭐" }
+            ],
+            hotels: [
+                { name: "Four Seasons Baku", location: "Bakı, Neftçilər prospekti", price: "300-600 AZN/gecə", rating: "⭐ 4.9", features: "5 ulduzlu lüks otel, dəniz mənzərəsi" },
+                { name: "Fairmont Baku", location: "Bakı, Flame Towers", price: "250-500 AZN/gecə", rating: "⭐ 4.8", features: "Şəhər panoraması, hovuz, spa mərkəzi" },
+                { name: "Shah Palace Hotel", location: "Bakı, İçərişəhər", price: "80-150 AZN/gecə", rating: "⭐ 4.5", features: "Tarixi mərkəzdə, butik otel" },
+                { name: "Qafqaz Riverside Hotel", location: "Qəbələ", price: "100-200 AZN/gecə", rating: "⭐ 4.6", features: "Təbiət qucağında, ailə üçün ideal" }
+            ],
+            rules: [
+                { title: "Viza rejimi", text: "Çox ölkə vətəndaşları üçün elektron viza (e-visa) sistemı mövcuddur. 30 günlük turist vizası 20-23 USD" },
+                { title: "Valyuta", text: "Rəsmi valyuta Azərbaycan Manatı (AZN). 1 USD = 1.70 AZN. Bank kartları hər yerdə qəbul edilir" },
+                { title: "Dil", text: "Rəsmi dil Azərbaycan dilidir. Rus dili geniş başa düşülür, turist yerlərdə ingilis dili danışılır" },
+                { title: "Mədəniyyət", text: "Müsəlman ölkəsidir, lakin sekulyardır. Dini yerlərdə örtülü geyinmək tövsiyə olunur" },
+                { title: "Təhlükəsizlik", text: "Azərbaycan turistlər üçün təhlükəsiz ölkədir. Bakı xüsusilə təhlükəsizdir" }
+            ],
+            transport: [
+                { type: "Metro", info: "Bakıda 3 xətt, 27 stansiya. Bilet: 0.30 AZN. Təmiz, sürətli və rahat", hours: "06:00 - 00:00" },
+                { type: "Taksi", info: "Bolt və Uber mövcuddur. Orta qiymət şəhər daxilində 5-15 AZN", hours: "24 saat" },
+                { type: "Avtobus", info: "Şəhər avtobusları və marşrutları. BakıKart (0.30 AZN) və ya nəğd (0.40 AZN)", hours: "06:00 - 23:00" },
+                { type: "Şəhərlərarası", info: "Bakıdan Şəkiyə, Qəbələyə, Gəncəyə müntəzəm avtobuslar və qatarlar", hours: "Müxtəlif cədvəl" }
+            ],
+            phrases: [
+                { az: "Salam", en: "Hello", use: "Salamlaşma" },
+                { az: "Sağ olun", en: "Thank you", use: "Təşəkkür" },
+                { az: "Zəhmət olmasa", en: "Please", use: "Xahiş" },
+                { az: "Bağışlayın", en: "Sorry / Excuse me", use: "Üzr istəmək" },
+                { az: "Bu nə qədərdir?", en: "How much is this?", use: "Qiymət soruşma" },
+                { az: "Mənə kömək edə bilərsinizmi?", en: "Can you help me?", use: "Kömək istəmək" },
+                { az: "Xoş gəlmisiniz", en: "Welcome", use: "Qarşılama" },
+                { az: "Görüşənədək", en: "Goodbye / See you", use: "Vidalaşma" }
+            ]
+        };
+
+        function showScreen(screenId) {
+            var screens = document.querySelectorAll('.screen');
+            for (var i = 0; i < screens.length; i++) {
+                screens[i].classList.remove('active');
+            }
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        function showCategory(category) {
+            var screenId = category + 'Screen';
+            var screen = document.getElementById(screenId);
+            
+            var html = '<button class="back-btn" onclick="showScreen(\'azerbaijanScreen\')">← Geri</button>';
+            
+            if (category === 'places') {
+                html += '<h2 style="margin-bottom: 20px; color: #333;">🗺️ Gəzməli Yerlər</h2>';
+                for (var i = 0; i < data.places.length; i++) {
+                    var place = data.places[i];
+                    html += '<div class="detail-card">' +
+                        '<h3>' + place.name + '</h3>' +
+                        '<p style="color: #667eea; font-size: 14px;">📍 ' + place.city + '</p>' +
+                        '<p>' + place.desc + '</p>' +
+                        '<div class="detail-meta">' +
+                        '<span class="meta-item">' + place.rating + '</span>' +
+                        '<span class="meta-item">💰 ' + place.price + '</span>' +
+                        '<span class="meta-item">⏰ ' + place.time + '</span>' +
+                        '</div></div>';
+                }
+            } else if (category === 'food') {
+                html += '<h2 style="margin-bottom: 20px; color: #333;">🍽️ Mətbəx</h2>';
+                for (var i = 0; i < data.food.length; i++) {
+                    var food = data.food[i];
+                    html += '<div class="detail-card">' +
+                        '<h3>' + food.name + '</h3>' +
+                        '<p>' + food.desc + '</p>' +
+                        '<div class="detail-meta">' +
+                        '<span class="meta-item">💰 ' + food.price + '</span>' +
+                        '<span class="meta-item">' + food.popularity + '</span>' +
+                        '</div></div>';
+                }
+            } else if (category === 'hotels') {
+                html += '<h2 style="margin-bottom: 20px; color: #333;">🏨 Qalacaq Yerlər</h2>';
+                for (var i = 0; i < data.hotels.length; i++) {
+                    var hotel = data.hotels[i];
+                    html += '<div class="detail-card">' +
+                        '<h3>' + hotel.name + '</h3>' +
+                        '<p style="color: #666; font-size: 14px;">📍 ' + hotel.location + '</p>' +
+                        '<p>' + hotel.features + '</p>' +
+                        '<div class="detail-meta">' +
+                        '<span class="meta-item">' + hotel.rating + '</span>' +
+                        '<span class="meta-item">💰 ' + hotel.price + '</span>' +
+                        '</div></div>';
+                }
+            } else if (category === 'rules') {
+                html += '<h2 style="margin-bottom: 20px; color: #333;">ℹ️ Qaydalar və Məsləhətlər</h2>';
+                for (var i = 0; i < data.rules.length; i++) {
+                    var rule = data.rules[i];
+                    html += '<div class="detail-card">' +
+                        '<h3>✓ ' + rule.title + '</h3>' +
+                        '<p>' + rule.text + '</p>' +
+                        '</div>';
+                }
+            } else if (category === 'transport') {
+                html += '<h2 style="margin-bottom: 20px; color: #333;">🚌 Nəqliyyat</h2>';
+                for (var i = 0; i < data.transport.length; i++) {
+                    var t = data.transport[i];
+                    html += '<div class="detail-card">' +
+                        '<h3>🚍 ' + t.type + '</h3>' +
+                        '<p>' + t.info + '</p>' +
+                        '<div class="detail-meta">' +
+                        '<span class="meta-item">🕐 ' + t.hours + '</span>' +
+                        '</div></div>';
+                }
+            } else if (category === 'phrases') {
+                html += '<h2 style="margin-bottom: 20px; color: #333;">💬 Faydalı Frazalar</h2>';
+                for (var i = 0; i < data.phrases.length; i++) {
+                    var phrase = data.phrases[i];
+                    html += '<div class="detail-card">' +
+                        '<h3>' + phrase.az + '</h3>' +
+                        '<p style="color: #667eea;">' + phrase.en + '</p>' +
+                        '<p style="font-size: 14px; color: #999; font-style: italic;">' + phrase.use + '</p>' +
+                        '</div>';
+                }
+            }
+            
+            screen.innerHTML = html;
+            showScreen(screenId);
+        }
+
+        function toggleAIChat() {
+            document.getElementById('aiChatBox').classList.toggle('active');
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendAIMessage();
+            }
+        }
+
+        function sendAIMessage() {
+            var input = document.getElementById('aiInput');
+            var message = input.value.trim();
+            
+            if (!message) return;
+            
+            addMessage(message, 'user');
+            input.value = '';
+            
+            document.getElementById('aiLoading').style.display = 'block';
+            
+            fetch('https://api.anthropic.com/v1/messages', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    model: 'claude-sonnet-4-20250514',
+                    max_tokens: 1000,
+                    messages: [{
+                        role: 'user',
+                        content: 'Sən Venturo adlı turizm tətbiqinin AI köməkçisisən. İstifadəçi Azərbaycan haqqında sual verir. Cavabını qısa (2-3 cümlə), dost və faydalı şəkildə Azərbaycan dilində yaz. Emojilər istifadə edə bilərsən. İstifadəçinin sualı: ' + message
+                    }]
+                })
+            })
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(result) {
+                document.getElementById('aiLoading').style.display = 'none';
+                
+                var aiResponse = '';
+                if (result.content && result.content.length > 0) {
+                    for (var i = 0; i < result.content.length; i++) {
+                        if (result.content[i].text) {
+                            aiResponse += result.content[i].text;
+                        }
+                    }
+                }
+                
+                if (aiResponse) {
+                    addMessage(aiResponse, 'bot');
+                } else {
+                    addMessage('Üzr istəyirəm, cavab verə bilmədim. Yenidən cəhd edin.', 'bot');
+                }
+            })
+            .catch(function(error) {
+                document.getElementById('aiLoading').style.display = 'none';
+                addMessage('🤖 Salam! Mən sizə Azərbaycan haqqında kömək edə bilərəm. Gəzməli yerlər, yeməklər, nəqliyyat və s. haqqında soruşun!', 'bot');
+            });
+        }
+
+        function addMessage(text, type) {
+            var messagesDiv = document.getElementById('aiMessages');
+            var messageDiv = document.createElement('div');
+            messageDiv.className = 'ai-message ' + type;
+            messageDiv.innerHTML = text;
+            messagesDiv.appendChild(messageDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+    </script>
+</body>
+</html>
